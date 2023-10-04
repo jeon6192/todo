@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://database-1.cema5enpf6c0.ap-northeast-2.rds.amazonaws.com/aws_mysql
+    username: admin
+    password: admin1234
+
+  jpa:
+    properties.hibernate:
+      show_sql: true
+      format_sql: true
+      hibernate:
+        ddl-auto: update
