@@ -1,15 +1,19 @@
 package com.example.todo.model.entity;
 
+import com.example.todo.model.dto.TodoDTO;
+import com.example.todo.model.dto.TodoStatusDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
 public class Todo extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,5 +35,15 @@ public class Todo extends BaseTimeEntity {
         this.user = user;
         this.contents = contents;
         this.todoStatus = todoStatus;
+    }
+
+    public void updateData(String contents, TodoStatus todoStatus) {
+        this.contents = contents;
+        this.todoStatus = todoStatus;
+    }
+
+    public void updateData(TodoDTO todoDto, TodoStatusDTO todoStatusDto) {
+        this.contents = todoDto.getContents();
+        this.todoStatus.updateStatus(todoStatusDto);
     }
 }

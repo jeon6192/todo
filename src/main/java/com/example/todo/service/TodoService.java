@@ -35,7 +35,7 @@ public class TodoService {
         this.todoStatusMapper = TodoStatusMapper.INSTANCE;
     }
 
-    public TodoDTO createTodo(TodoDTO todoDTO) {
+    public TodoDTO saveTodo(TodoDTO todoDTO) {
         Todo todo = todoMapper.toEntity(todoDTO);
 
         return todoMapper.toDto(todoRepository.save(todo));
@@ -60,5 +60,20 @@ public class TodoService {
                 .orElseThrow(() -> new UserException(UserError.HAVE_NO_DATA));
 
         return todoMapper.toDto(todo);
+    }
+
+    public void deleteTodo(Long todoIdx) throws UserException {
+        Todo todo = todoRepository.findById(todoIdx).orElseThrow(() -> new UserException(UserError.HAVE_NO_DATA));
+
+        todoRepository.delete(todo);
+    }
+
+    public TodoDTO updateTodo(Long todoIdx, TodoDTO todoDto) throws UserException {
+        TodoStatusDTO todoStatusDto = getTodoStatus(todoDto.getTodoStatus().getStatus());
+
+        Todo todo = todoRepository.findById(todoIdx).orElseThrow(() -> new UserException(UserError.HAVE_NO_DATA));
+        todo.updateData(todoDto.getContents(), todoStatusMapper.toEntity(todoStatusDto));
+
+        return todoMapper.toDto(todoRepository.save(todo));
     }
 }

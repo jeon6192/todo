@@ -9,6 +9,7 @@ import com.example.todo.service.TodoService;
 import com.example.todo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.Objects;
 
 @Slf4j
 @RestController
+@RequestMapping("/todo")
 public class TodoController {
 
     private final UserService userService;
@@ -28,7 +30,7 @@ public class TodoController {
         this.todoService = todoService;
     }
 
-    @PostMapping("/todo/{userIdx}")
+    @PostMapping("/{userIdx}")
     public ResponseEntity<TodoDTO> createTodo(@Validated @RequestBody TodoDTO todoDTO, @PathVariable Long userIdx,
                                               BindingResult bindingResult) throws UserException {
         if (bindingResult.hasErrors()) {
@@ -45,20 +47,44 @@ public class TodoController {
                 .todoStatus(todoStatusDTO)
                 .build();
 
-        return ResponseEntity.ok(todoService.createTodo(dtoToSave));
+        return ResponseEntity.ok(todoService.saveTodo(dtoToSave));
     }
 
-    @GetMapping("/todo/{userIdx}")
+    @GetMapping("/{userIdx}")
     public ResponseEntity<List<TodoDTO>> getTodoList(@PathVariable Long userIdx) throws UserException {
         UserDTO userDto = userService.getUser(userIdx);
 
         return ResponseEntity.ok(todoService.getList(userDto));
     }
 
-    @GetMapping("/todo/last/{userIdx}")
+    @GetMapping("/last/{userIdx}")
     public ResponseEntity<TodoDTO> getLastTodo(@PathVariable Long userIdx) throws UserException {
         UserDTO userDto = userService.getUser(userIdx);
 
         return ResponseEntity.ok(todoService.getLastOne(userDto));
+    }
+
+    @DeleteMapping("/{todoIdx}")
+    @PreAuthorize("@apiGuard.checkAuthority(#todoIdx)")
+    public ResponseEntity<Void> deleteTodo(@PathVariable Long todoIdx) throws UserException {
+        if (todoIdx == null) {
+            throw new UserException(UserError.BAD_REQUEST);
+        }
+
+        todoService.deleteTodo(todoIdx);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{todoIdx}")
+    @PreAuthorize("@apiGuard.checkAuthority(#todoIdx)")
+    public ResponseEntity<TodoDTO> updateTodo(@Validated @RequestBody TodoDTO todoDto, @PathVariable Long todoIdx,
+                                              BindingResult bindingResult) throws UserException {
+        if (bindingResult.hasErrors()) {
+            String message = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new UserException(UserError.BAD_REQUEST, message);
+        }
+
+        return ResponseEntity.ok(todoService.updateTodo(todoIdx, todoDto));
     }
 }
