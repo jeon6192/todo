@@ -39,4 +39,12 @@ public class UserService {
 
         return userMapper.toDto(user);
     }
+
+    public void withdrawalUser(Long userIdx) throws UserException {
+        User user = userRepository.findById(userIdx).orElseThrow(() -> new UserException(UserError.HAVE_NO_DATA));
+
+        user.updateIsEnabled();
+
+        userRepository.save(user);
+    }
 }

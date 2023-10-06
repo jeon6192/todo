@@ -10,10 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
@@ -45,12 +42,25 @@ public class UserController {
 
     @GetMapping("/about-me")
     public ResponseEntity<UserDTO> me(@AuthenticationPrincipal CustomUserDetails customUserDetails) throws UserException {
-        Long idx = customUserDetails.getUser().getIdx();
+        Long userIdx = customUserDetails.getUser().getIdx();
 
-        if(idx == null) {
+        if (userIdx == null) {
             throw new UserException(UserError.NOT_DEFINED);
         }
 
-        return ResponseEntity.ok(userService.getUser(idx));
+        return ResponseEntity.ok(userService.getUser(userIdx));
+    }
+
+    @PutMapping("/withdraw")
+    public ResponseEntity<Void> withdrawalUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) throws UserException {
+        Long userIdx = customUserDetails.getUser().getIdx();
+
+        if (userIdx == null) {
+            throw new UserException(UserError.NOT_DEFINED);
+        }
+
+        userService.withdrawalUser(userIdx);
+
+        return ResponseEntity.ok().build();
     }
 }
