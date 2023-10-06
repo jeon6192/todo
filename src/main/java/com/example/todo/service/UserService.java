@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 public class UserService {
@@ -44,6 +46,7 @@ public class UserService {
         User user = userRepository.findById(userIdx).orElseThrow(() -> new UserException(UserError.HAVE_NO_DATA));
 
         user.updateIsEnabled();
+        user.updateWithdrawalDate(LocalDateTime.now());
 
         userRepository.save(user);
     }

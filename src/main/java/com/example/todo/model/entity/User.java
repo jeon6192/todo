@@ -44,4 +44,8 @@ public class User extends BaseTimeEntity {
     public void updateIsEnabled() {
         this.isEnabled = false;
     }
+
+    public void updateWithdrawalDate(LocalDateTime withdrawalDate) {
+        this.withdrawalDate = withdrawalDate;
+    }
 }
