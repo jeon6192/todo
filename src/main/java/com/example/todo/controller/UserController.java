@@ -51,6 +51,6 @@ public class UserController {
             throw new UserException(UserError.NOT_DEFINED);
         }
 
-        return ResponseEntity.ok(userService.me(idx));
+        return ResponseEntity.ok(userService.getUser(idx));
     }
 }

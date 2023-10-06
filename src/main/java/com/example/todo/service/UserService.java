@@ -34,8 +34,8 @@ public class UserService {
         return userMapper.toDto(userRepository.save(user));
     }
 
-    public UserDTO me(Long idx) throws UserException {
-        User user = userRepository.findById(idx).orElseThrow(() -> new UserException(UserError.NOT_DEFINED));
+    public UserDTO getUser(Long idx) throws UserException {
+        User user = userRepository.findById(idx).orElseThrow(() -> new UserException(UserError.HAVE_NO_DATA));
 
         return userMapper.toDto(user);
     }

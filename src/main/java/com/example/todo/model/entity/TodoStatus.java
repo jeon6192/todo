@@ -1,6 +1,7 @@
 package com.example.todo.model.entity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,4 +19,10 @@ public class TodoStatus extends BaseTimeEntity {
     private Long idx;
 
     private String status;
+
+    @Builder
+    public TodoStatus(Long idx, String status) {
+        this.idx = idx;
+        this.status = status;
+    }
 }
